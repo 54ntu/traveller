@@ -1,0 +1,14 @@
+import mongoose from "mongoose";
+import { envConfig } from "../config/config";
+
+const connectdb = async () => {
+  try {
+    await mongoose.connect(`${envConfig.mongodb_url}`);
+    console.log("database connected successfully...!!");
+  } catch (error) {
+    console.log("error connecting database", error);
+    process.exit(1);
+  }
+};
+
+export default connectdb;
