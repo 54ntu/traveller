@@ -1,6 +1,6 @@
-import app from "./app";
-import { envConfig } from "./src/config/config";
-import connectdb from "./src/dbconfig/db";
+import app from "./app.js";
+import { envConfig } from "./src/config/config.js";
+import connectdb from "./src/dbconfig/db.js";
 
 connectdb()
   .then(() => {
