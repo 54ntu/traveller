@@ -12,7 +12,11 @@ router.route("/login").post(UserController.login);
 
 router
   .route("/update")
-  .patch(UserMiddleware.isUserLoggedIn, UserController.updateUser);
+  .patch(
+    UserMiddleware.isUserLoggedIn,
+    upload.single("profile"),
+    UserController.updateUser
+  );
 
 router
   .route("/delete")

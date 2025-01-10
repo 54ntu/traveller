@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import User from "../models/user.models.js";
 import ApiResponse from "../services/ApiResponse.js";
 import generateToken from "../services/tokenservices.js";
@@ -22,7 +23,6 @@ class UserController {
     }
 
     const encryptedpass = await EncryptionDecryption.hashedPassword(password);
-    // console.log(encryptedpass);
 
     const userdata = await User.create({
       fullname,
@@ -88,9 +88,18 @@ class UserController {
   }
 
   static async updateUser(req, res) {
-    const id = req.user;
+    const id = req.user.id;
+    // console.log(id);
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        message: "invalid user id ",
+      });
+    }
+    // console.log(req.user);
     const imagename = req.file?.filename;
     const { fullname, email } = req.body;
+    // console.log(fullname, email);
+    // console.log(imagename);
 
     const updateddata = await User.findByIdAndUpdate(id, {
       fullname: fullname,
@@ -98,21 +107,25 @@ class UserController {
       profile_pic: imagename,
     });
 
-    if (!updateddata) {
+    const isdataUpdated = await User.findById(updateddata._id).select(
+      "-password"
+    );
+
+    if (!isdataUpdated) {
       return res.status(500).json({
-        message: "error updating user data",
+        message: "data updation failed..!",
       });
     }
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, updateddata, "user data updated successfully")
+        new ApiResponse(200, isdataUpdated, "user data updated successfully")
       );
   }
 
   static async deleteUser(req, res) {
-    const id = req.user;
+    const id = req.user.id;
     if (!id) {
       return res.status(400).json({
         message: "invalid id",
