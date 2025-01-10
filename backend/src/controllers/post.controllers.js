@@ -8,6 +8,9 @@ class PostController {
         message: "content is required",
       });
     }
+
+    console.log(`photourl  : ${photourl}`);
+    console.log(`videourl  : ${videourl}`);
   }
 }
 
