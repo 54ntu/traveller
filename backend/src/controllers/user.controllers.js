@@ -6,8 +6,9 @@ import EncryptionDecryption from "../services/userAuth.services.js";
 
 class UserController {
   static async userRegister(req, res) {
+    console.log(`req.file : ${req.file}`);
     const profile_image = req.file?.filename;
-    console.log(req.body);
+    // console.log(req.body);
     const { fullname, email, password, role } = req.body;
     if (!fullname || !email || !password || !role) {
       return res.status(400).json({
@@ -88,40 +89,45 @@ class UserController {
   }
 
   static async updateUser(req, res) {
-    const id = req.user.id;
-    // console.log(id);
-    if (!isValidObjectId(id)) {
-      return res.status(400).json({
-        message: "invalid user id ",
+    try {
+      const id = req.user.id;
+      // console.log(id);
+      if (!isValidObjectId(id)) {
+        return res.status(400).json({
+          message: "invalid user id ",
+        });
+      }
+      // console.log(req.user);
+      console.log(`req.file  :${req.file}`);
+      const imagename = req.file?.filename;
+      const { fullname, email } = req.body;
+      console.log(fullname, email);
+      console.log(imagename);
+
+      const updateddata = await User.findByIdAndUpdate(id, {
+        fullname: fullname,
+        email: email,
+        profile_pic: imagename,
       });
-    }
-    // console.log(req.user);
-    const imagename = req.file?.filename;
-    const { fullname, email } = req.body;
-    // console.log(fullname, email);
-    // console.log(imagename);
 
-    const updateddata = await User.findByIdAndUpdate(id, {
-      fullname: fullname,
-      email: email,
-      profile_pic: imagename,
-    });
-
-    const isdataUpdated = await User.findById(updateddata._id).select(
-      "-password"
-    );
-
-    if (!isdataUpdated) {
-      return res.status(500).json({
-        message: "data updation failed..!",
-      });
-    }
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, isdataUpdated, "user data updated successfully")
+      const isdataUpdated = await User.findById(updateddata._id).select(
+        "-password"
       );
+
+      if (!isdataUpdated) {
+        return res.status(500).json({
+          message: "data updation failed..!",
+        });
+      }
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, isdataUpdated, "user data updated successfully")
+        );
+    } catch (error) {
+      console.log("erorr ", error);
+    }
   }
 
   static async deleteUser(req, res) {

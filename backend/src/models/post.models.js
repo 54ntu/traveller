@@ -8,6 +8,7 @@ const postSchema = new mongoose.Schema(
     },
     photos: {
       type: String,
+      default: [],
     },
     videos: {
       type: String,

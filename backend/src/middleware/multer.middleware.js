@@ -1,6 +1,6 @@
 import multer from "multer";
 
-const Imagestorage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./src/public/images");
   },
@@ -10,16 +10,6 @@ const Imagestorage = multer.diskStorage({
   },
 });
 
-const videoStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./src/public/videos");
-  },
-  filename: function (req, file, cb) {
-    let videoname = Date.now() + file.originalname;
-    cb(null, videoname);
-  },
-});
+const upload = multer({ storage: storage });
 
-const imageupload = multer({ storage: Imagestorage });
-const videoupload = multer({ storage: videoStorage });
-export { imageupload, videoupload };
+export default upload;
