@@ -16,7 +16,7 @@ class PostController {
     const { content } = req.body;
     if (!content) {
       return res.status(400).json({
-        message: "content if required...!!",
+        message: "content is required...!!",
       });
     }
     const postdata = await Post.create({
