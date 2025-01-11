@@ -16,13 +16,16 @@ router
   )
   .get(PostController.getAllPost);
 
-router.route("/:id").patch(
-  UserMiddleware.isUserLoggedIn,
-  upload.fields([
-    { name: "video", maxCount: 1 },
-    { name: "photo", maxCount: 1 },
-  ]),
-  PostController.updatePost
-);
+router
+  .route("/:id")
+  .patch(
+    UserMiddleware.isUserLoggedIn,
+    upload.fields([
+      { name: "video", maxCount: 1 },
+      { name: "photo", maxCount: 1 },
+    ]),
+    PostController.updatePost
+  )
+  .delete(UserMiddleware.isUserLoggedIn, PostController.deletepost);
 
 export default router;

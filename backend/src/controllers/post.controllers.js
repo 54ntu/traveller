@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import Post from "../models/post.models.js";
 import ApiResponse from "../services/ApiResponse.js";
 
@@ -89,6 +90,29 @@ class PostController {
       .json(
         new ApiResponse(200, updatedPost, "post updated successfully.😊😊😊😊")
       );
+  }
+
+  static async deletepost(req, res) {
+    const { id } = req.params;
+    const userid = req.user.id;
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        message: "invalid object id",
+      });
+    }
+
+    const deletedpost = await Post.findOneAndDelete({ _id: id, owner: userid });
+    // console.log(deletedpost);
+    if (!deletedpost) {
+      return res.status(404).json({
+        message: "post not found!",
+      });
+    }
+    return res.status(200).json(
+      new ApiResponse({
+        message: "post deleted successfully..!!",
+      })
+    );
   }
 }
 
