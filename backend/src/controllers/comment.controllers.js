@@ -160,39 +160,6 @@ class CommentController {
           updatedAt: "$ownerdetails.updatedAt",
         },
       },
-
-      {
-        $lookup: {
-          from: "posts",
-          localField: "post",
-          foreignField: "_id",
-          as: "postdetails",
-          pipeline: [
-            {
-              $lookup: {
-                from: "users",
-                localField: "owner",
-                foreignField: "_id",
-                as: "ownerinfo",
-              },
-            },
-            {
-              $unwind: "$ownerinfo",
-            },
-          ],
-        },
-      },
-      {
-        $unwind: "$postdetails",
-      },
-      {
-        $project: {
-          fullname: "$ownerdetails.fullname",
-          createdAt: "$ownerdetails.createdAt",
-          updatedAt: "$ownerdetails.updatedAt",
-          postTitle: "$postdetails.title", // Assuming there's a title field
-        },
-      },
     ]);
     return res
       .status(200)
