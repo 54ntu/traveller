@@ -140,7 +140,60 @@ class CommentController {
   }
 
   static async getcomment(req, res) {
-    const commentdata = await Comment.find();
+    const commentdata = await Comment.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "owner",
+          foreignField: "_id",
+          as: "ownerdetails",
+        },
+      },
+      {
+        $unwind: "$ownerdetails",
+      },
+
+      {
+        $project: {
+          fullname: "$ownerdetails.fullname",
+          createdAt: "$ownerdetails.createdAt",
+          updatedAt: "$ownerdetails.updatedAt",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "posts",
+          localField: "post",
+          foreignField: "_id",
+          as: "postdetails",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerinfo",
+              },
+            },
+            {
+              $unwind: "$ownerinfo",
+            },
+          ],
+        },
+      },
+      {
+        $unwind: "$postdetails",
+      },
+      {
+        $project: {
+          fullname: "$ownerdetails.fullname",
+          createdAt: "$ownerdetails.createdAt",
+          updatedAt: "$ownerdetails.updatedAt",
+          postTitle: "$postdetails.title", // Assuming there's a title field
+        },
+      },
+    ]);
     return res
       .status(200)
       .json(
