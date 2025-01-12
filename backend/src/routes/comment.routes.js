@@ -10,7 +10,8 @@ router
 
 router
   .route("/:commentid")
-  .patch(UserMiddleware.isUserLoggedIn, CommentController.updateComment);
+  .patch(UserMiddleware.isUserLoggedIn, CommentController.updateComment)
+  .delete(UserMiddleware.isUserLoggedIn, CommentController.deleteComment);
 
 router
   .route("/")
