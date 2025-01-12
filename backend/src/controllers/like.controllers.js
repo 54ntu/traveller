@@ -75,8 +75,16 @@ class LikeController {
             },
             {
               $project: {
-                fullname: 1,
-                email: 1,
+                // fullname: 1,
+                // email: 1,
+                _id: 1,
+                content: 1,
+                photos: 1,
+                videos: 1,
+                owner: {
+                  fullname: "$owner.fullname",
+                  email: "$owner.email",
+                },
               },
             },
           ],
@@ -85,20 +93,30 @@ class LikeController {
       {
         $unwind: "$postdetails",
       },
-      //   {
-      //     $project: {
-      //       "photos.url": 1,
-      //       "videos.url": 1,
-      //       content: 1,
-      //       owner: {
-      //         fullname: 1,
-      //         email: 1,
-      //       },
-      //     },
-      //   },
+      {
+        $project: {
+          _id: 1,
+          postdetails: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
     ]);
 
-    console.log(aggregateLikedPost);
+    if (aggregateLikedPost.length === 0) {
+      return res.status(400).json({
+        message: "data not found!!!",
+      });
+    }
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          aggregateLikedPost[0],
+          "post data fetched successfully.."
+        )
+      );
   }
 }
 
