@@ -54,6 +54,45 @@ class CommentController {
         message: "please provide userid and commentid  ",
       });
     }
+
+    //verify whether comment with id is available or not and also check whether the comment is belong to the logged in user,, if both case is match then only proceed for the updation
+    const updatecomment = await Comment.findOneAndUpdate(
+      {
+        _id: commentid,
+        owner: userid,
+      },
+      {
+        content: content,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!updatecomment) {
+      return res.status(500).json({
+        message: "comment updation failed😑😑😑😑",
+      });
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          updatecomment,
+          "comment updated successfully.😎😎😎😎😎"
+        )
+      );
+  }
+
+  static async getcomment(req, res) {
+    const commentdata = await Comment.find();
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, commentdata, "comment fetched successfully..")
+      );
   }
 }
 

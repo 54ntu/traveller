@@ -12,4 +12,8 @@ router
   .route("/:commentid")
   .patch(UserMiddleware.isUserLoggedIn, CommentController.updateComment);
 
+router
+  .route("/")
+  .get(UserMiddleware.isUserLoggedIn, CommentController.getcomment);
+
 export default router;
